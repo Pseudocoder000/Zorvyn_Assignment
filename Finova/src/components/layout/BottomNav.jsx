@@ -10,7 +10,7 @@ const links = [
 export default function BottomNav() {
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-surface-card border-t border-gray-200 dark:border-surface-border px-2 py-2 flex items-center justify-around">
-      {links.map(({ to, label, Icon }) => (
+      {links.map(({ to, label }) => (
         <NavLink
           key={to}
           to={to}

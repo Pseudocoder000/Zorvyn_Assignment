@@ -62,7 +62,7 @@ export default function Navbar() {
           {open && (
             <div className="absolute right-0 top-full mt-2 w-40 bg-white dark:bg-surface-card border border-gray-200 dark:border-surface-border rounded-xl shadow-xl overflow-hidden z-50">
               <div className="p-1">
-                {ROLES.map(({ value, label, Icon: RoleIcon }) => {
+                {ROLES.map(({ value, label }) => {
                   const isActive = role === value
                   return (
                     <button
