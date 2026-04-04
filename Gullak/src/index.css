@@ -9,7 +9,7 @@
   /* ── DARK (default) ── */
   body {
     font-family: 'Inter', sans-serif;
-    color: #e2e8f0;
+    color: hsl(210, 43%, 92%);
     background-color: #080812;
     background-image:
       radial-gradient(ellipse at 10% 30%, rgba(20,184,166,0.12) 0%, transparent 50%),
@@ -21,7 +21,7 @@
   /* ── LIGHT ── */
   html.light body {
     color: #0f172a;
-    background-color: #eef9f7;
+    background-color: #d8ede9;
     background-image:
       radial-gradient(ellipse at 10% 20%, rgba(20,184,166,0.18) 0%, transparent 45%),
       radial-gradient(ellipse at 85% 75%, rgba(245,158,11,0.12) 0%, transparent 45%),
