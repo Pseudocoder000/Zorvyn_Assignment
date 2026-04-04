@@ -20,7 +20,7 @@ export default function Navbar() {
     <header className="relative w-full h-16 flex items-center px-4 md:px-6 border-b border-white/[0.05]">
 
       {/* LEFT */}
-      <div className="flex items-center gap-2 z-10">
+      <div className="flex md:hidden items-center gap-2 z-10">
         <img src={gullak} className="w-6 h-6 md:w-7 md:h-7" />
         <span className="text-lg md:text-xl font-bold">Gullak</span>
       </div>
