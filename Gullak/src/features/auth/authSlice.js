@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-const saved = localStorage.getItem('finova_role')
+const saved = localStorage.getItem('Gullak_role')
 
 const authSlice = createSlice({
   name: 'auth',

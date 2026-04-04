@@ -6,9 +6,9 @@ import themeReducer from '../features/theme/themeSlice'
 const localStorageMiddleware = store => next => action => {
   const result = next(action)
   const state = store.getState()
-  localStorage.setItem('finova_transactions', JSON.stringify(state.transactions.items))
-  localStorage.setItem('finova_role', state.auth.role)
-  localStorage.setItem('finova_theme', state.theme.mode)
+  localStorage.setItem('Gullak_transactions', JSON.stringify(state.transactions.items))
+  localStorage.setItem('Gullak_role', state.auth.role)
+  localStorage.setItem('Gullak_theme', state.theme.mode)
   return result
 }
 

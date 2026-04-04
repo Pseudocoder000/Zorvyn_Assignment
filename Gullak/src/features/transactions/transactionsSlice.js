@@ -1,7 +1,7 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit'
 import { mockTransactions } from '../../data/mockTransactions'
 
-const saved = localStorage.getItem('finova_transactions')
+const saved = localStorage.getItem('Gullak_transactions')
 const initialItems = saved ? JSON.parse(saved) : mockTransactions
 
 const transactionsSlice = createSlice({

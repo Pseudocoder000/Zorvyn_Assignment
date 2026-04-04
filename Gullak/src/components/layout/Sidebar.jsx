@@ -223,7 +223,7 @@ export default function Sidebar() {
           background: 'rgba(255,255,255,0.02)',
           border: '1px solid rgba(255,255,255,0.05)',
         }}>
-        <p className="text-[10px] gt font-semibold mb-0.5">Finova v1.0</p>
+        <p className="text-[10px] gt font-semibold mb-0.5">Gullak v1.0</p>
         <p className={`text-[10px] ${isLight ? 'text-slate-400' : 'text-white/25'}`}>Finance Dashboard</p>
       </div>
     </aside>
