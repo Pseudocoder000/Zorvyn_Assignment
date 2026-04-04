@@ -8,15 +8,6 @@ export default function SpendingPieChart({ transactions }) {
   const [isHovered, setIsHovered] = useState(false)
   const [activeId, setActiveId] = useState(null)
 
-  // 🔥 KEY FIX (resize handling)
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
-
-  useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth)
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
-
   const data = useMemo(() => {
     const totals = {}
     transactions
@@ -38,15 +29,15 @@ export default function SpendingPieChart({ transactions }) {
   const total = data.reduce((a, d) => a + d.value, 0)
 
   return (
-    <div className="flex flex-col gap-3 w-full min-w-0 overflow-visible">
+    <div className="flex flex-col gap-2 relative overflow-visible">
 
-      {/* 🔥 RESPONSIVE PIE */}
+      {/* 🔥 Rotating Pie */}
       <motion.div
-        className="w-full h-[180px] sm:h-[200px] md:h-[220px] flex items-center justify-center"
+        style={{ height: 180 }}
         animate={!isHovered ? { rotate: 360 } : { rotate: 0 }}
         transition={{
           repeat: Infinity,
-          duration: 18,
+          duration: 20,
           ease: "linear"
         }}
         onMouseEnter={() => setIsHovered(true)}
@@ -55,59 +46,59 @@ export default function SpendingPieChart({ transactions }) {
           setActiveId(null)
         }}
       >
-        {/* 🔥 IMPORTANT WIDTH CONTROL */}
-        <div className="w-full max-w-[260px] sm:max-w-[300px] md:max-w-[340px] h-full">
+        <ResponsivePie
+          data={data}
+          margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+          innerRadius={0.65}
+          padAngle={2.5}
+          cornerRadius={5}
+          colors={d => d.data.color}
+          borderWidth={0}
+          enableArcLinkLabels={false}
+          enableArcLabels={false}
 
-          <ResponsivePie
-            key={windowWidth} // 🔥 FIX: forces re-render on resize
-            data={data}
-            margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
-            innerRadius={0.65}
-            padAngle={2.5}
-            cornerRadius={5}
-            colors={d => d.data.color}
-            borderWidth={0}
-            enableArcLinkLabels={false}
-            enableArcLabels={false}
+          // 🔥 Track hover slice
+          onMouseMove={(datum) => {
+            setActiveId(datum.id)
+          }}
 
-            onMouseMove={(datum) => {
-              setActiveId(datum.id)
-            }}
+          // 🔥 Stable tooltip
+          tooltip={({ datum }) => (
+            <div
+              style={{
+                position: "fixed",
+                background: '#0e0e1f',
+                border: `1px solid ${datum.color}44`,
+                borderRadius: '10px',
+                padding: '6px 10px',
+                fontSize: '12px',
+                fontWeight: 600,
+                color: '#e2e8f0',
+                pointerEvents: 'none',
+                zIndex: 9999,
+                transform: 'translate(-50%, -120%)'
+              }}
+            >
+              <span style={{ color: datum.color }}>● </span>
+              {datum.label}:{' '}
+              <span style={{ color: datum.color }}>
+                {formatCurrency(datum.value)}
+              </span>
+            </div>
+          )}
 
-            tooltip={({ datum }) => (
-              <div
-                style={{
-                  background: '#0e0e1f',
-                  border: `1px solid ${datum.color}44`,
-                  borderRadius: '10px',
-                  padding: '6px 10px',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  color: '#e2e8f0'
-                }}
-              >
-                <span style={{ color: datum.color }}>● </span>
-                {datum.label}:{' '}
-                <span style={{ color: datum.color }}>
-                  {formatCurrency(datum.value)}
-                </span>
-              </div>
-            )}
-
-            theme={{
-              tooltip: {
-                container: {
-                  pointerEvents: "none"
-                }
+          theme={{
+            tooltip: {
+              container: {
+                pointerEvents: "none"
               }
-            }}
-          />
-
-        </div>
+            }
+          }}
+        />
       </motion.div>
 
-      {/* 🔥 RESPONSIVE LEGEND */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-x-2 gap-y-1">
+      {/* 🔥 Smart Legend */}
+      <div className="grid grid-cols-2 gap-x-2 gap-y-1 mt-1">
         {data.slice(0, 8).map(item => {
           const isActiveItem = item.id === activeId
 
@@ -127,7 +118,7 @@ export default function SpendingPieChart({ transactions }) {
               />
 
               <span
-                className={`text-xs truncate flex-1 ${
+                className={`text-xs truncate flex-1 transition-all duration-300 ${
                   isActiveItem ? "text-white font-semibold" : "text-white/50"
                 }`}
               >
@@ -135,12 +126,12 @@ export default function SpendingPieChart({ transactions }) {
               </span>
 
               <span
-                className={`text-xs shrink-0 ${
+                className={`text-xs shrink-0 transition-all duration-300 ${
                   isActiveItem ? "text-white font-bold" : "text-white/70"
                 }`}
               >
                 {isActiveItem
-                  ? formatCurrency(item.value)
+                  ? formatCurrency(item.value)   // 🔥 ₹ ON HOVER
                   : `${Math.round((item.value / total) * 100)}%`}
               </span>
             </div>
