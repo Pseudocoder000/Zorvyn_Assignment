@@ -1,15 +1,21 @@
-import { useEffect } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { useEffect, useState, useRef } from 'react'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { Toaster } from 'react-hot-toast'
 import Layout from './components/layout/Layout'
 import Dashboard from './pages/Dashboard'
 import Transactions from './pages/Transactions'
 import Insights from './pages/Insights'
+import { motion } from "framer-motion"
+import gullak from "./stickers/gullak.png"
 
 export default function App() {
   const mode = useSelector(s => s.theme.mode)
+  const location = useLocation()
+  const [loading, setLoading] = useState(false)
+  const firstLoad = useRef(true) // 🔥 KEY FIX
 
+  // 🌗 Theme
   useEffect(() => {
     if (mode === 'light') {
       document.documentElement.classList.add('light')
@@ -20,8 +26,61 @@ export default function App() {
     }
   }, [mode])
 
+  // 🔥 Loader ONLY on route change (not first load)
+  useEffect(() => {
+    if (firstLoad.current) {
+      firstLoad.current = false
+      return
+    }
+
+    setLoading(true)
+
+    const timer = setTimeout(() => {
+      setLoading(false)
+    }, 600)
+
+    return () => clearTimeout(timer)
+  }, [location.pathname])
+
   return (
     <>
+      {/* 🔥 SINGLE LOADER */}
+      {loading && (
+        <div className="fixed inset-0 z-[9999] bg-[#05060f]/90 flex items-center justify-center">
+          
+          <div className="relative flex flex-col items-center">
+
+            {/* 🐷 Gullak */}
+            <motion.img
+              src={gullak}
+              className="w-16 md:w-20"
+              initial={{ scale: 0.8 }}
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 1, repeat: Infinity }}
+            />
+
+            {/* 💰 Coin */}
+            <motion.div
+              className="w-4 h-4 bg-yellow-400 rounded-full absolute -top-6"
+              animate={{
+                y: [0, 35, 15],
+                opacity: [1, 1, 0]
+              }}
+              transition={{
+                duration: 1,
+                repeat: Infinity,
+                ease: "easeIn"
+              }}
+            />
+
+            <p className="text-white/60 text-sm mt-3">
+              Adding to Gullak...
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* 🔔 Toast */}
       <Toaster
         position="top-right"
         toastOptions={{
@@ -41,7 +100,9 @@ export default function App() {
           error:   { iconTheme: { primary: '#f87171', secondary: '#fff' } },
         }}
       />
-      <Routes>
+
+      {/* 📄 Routes */}
+      <Routes location={location}>
         <Route path="/" element={<Layout />}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
