@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setRole } from '../../features/auth/authSlice'
 import { formatCurrency } from '../../utils/formatters'
 import gullak from "../../stickers/gullak.png" 
+import profileImg from "../../assets/profile.jpg";
 
 const links = [
   { to: '/dashboard',    label: 'Dashboard',    icon: LayoutDashboard },
@@ -41,7 +42,7 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="flex items-center gap-3 px-2">
         {/* <div className="w-9 h-9 rounded-2xl gb flex items-center justify-center shrink-0"> */}
-        <div className="w-9 h-9 rounded-2xl flex items-center justify-center shrink-0">
+        <div className="w-16 h-9 rounded-2xl flex items-center justify-center shrink-0">
           {/* <TrendingUp size={16} className="text-white" /> */}
           <img src={gullak} alt="logo" />
         </div>
@@ -63,9 +64,13 @@ export default function Sidebar() {
       >
         {/* Avatar + Name */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl gb flex items-center justify-center text-white text-sm font-bold shrink-0">
-            {user.avatar}
-          </div>
+         <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0">
+  <img
+    src={profileImg}
+    alt="profile"
+    className="w-full h-full object-cover"
+  />
+</div>
           <div className="min-w-0">
             <p className={`text-sm font-bold truncate ${isLight ? 'text-slate-700' : 'text-white'}`}>
               {user.name}
