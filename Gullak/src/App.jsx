@@ -1,21 +1,26 @@
-import { useEffect, useState, useRef } from 'react'
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from "react-router-dom"
 import { useSelector } from 'react-redux'
+import { useEffect, useState, useRef } from 'react'
 import { Toaster } from 'react-hot-toast'
+import { motion } from "framer-motion"
+
+import Navbar from "./components/layout/Navbar"
+import NotificationsPage from "./pages/NotificationsPage"
+
 import Layout from './components/layout/Layout'
 import Dashboard from './pages/Dashboard'
 import Transactions from './pages/Transactions'
 import Insights from './pages/Insights'
-import { motion } from "framer-motion"
+
 import gullak from "./stickers/gullak.png"
 
 export default function App() {
   const mode = useSelector(s => s.theme.mode)
   const location = useLocation()
   const [loading, setLoading] = useState(false)
-  const firstLoad = useRef(true) // 🔥 KEY FIX
+  const firstLoad = useRef(true)
 
-  // 🌗 Theme
+  // 🌗 Theme handling
   useEffect(() => {
     if (mode === 'light') {
       document.documentElement.classList.add('light')
@@ -26,7 +31,7 @@ export default function App() {
     }
   }, [mode])
 
-  // 🔥 Loader ONLY on route change (not first load)
+  // 🔥 Loader on route change
   useEffect(() => {
     if (firstLoad.current) {
       firstLoad.current = false
@@ -34,23 +39,20 @@ export default function App() {
     }
 
     setLoading(true)
-
-    const timer = setTimeout(() => {
-      setLoading(false)
-    }, 600)
+    const timer = setTimeout(() => setLoading(false), 600)
 
     return () => clearTimeout(timer)
   }, [location.pathname])
 
   return (
     <>
-      {/* 🔥 SINGLE LOADER */}
+      {/* 🔔 Navbar (contains notification bell) */}
+
+      {/* 🔥 Loader */}
       {loading && (
         <div className="fixed inset-0 z-[9999] bg-[#05060f]/90 flex items-center justify-center">
-          
           <div className="relative flex flex-col items-center">
 
-            {/* 🐷 Gullak */}
             <motion.img
               src={gullak}
               className="w-16 md:w-20"
@@ -59,7 +61,6 @@ export default function App() {
               transition={{ duration: 1, repeat: Infinity }}
             />
 
-            {/* 💰 Coin */}
             <motion.div
               className="w-4 h-4 bg-yellow-400 rounded-full absolute -top-6"
               animate={{
@@ -103,12 +104,18 @@ export default function App() {
 
       {/* 📄 Routes */}
       <Routes location={location}>
+        
+        {/* Main layout */}
         <Route path="/" element={<Layout />}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="transactions" element={<Transactions />} />
           <Route path="insights" element={<Insights />} />
         </Route>
+
+        {/* 🔔 Notification Page Route */}
+        <Route path="/notifications" element={<NotificationsPage />} />
+
       </Routes>
     </>
   )

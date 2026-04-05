@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { useMemo, useState, useEffect } from 'react'
 import { Wallet, TrendingUp, TrendingDown, Activity } from 'lucide-react'
 import StatCard from '../components/ui/StatCard'
@@ -9,8 +9,10 @@ import BudgetTracker from '../components/dashboard/BudgetTracker'
 import { formatCurrency } from '../utils/formatters'
 import { SkeletonStatCard, SkeletonChart } from '../components/ui/SkeletonCard'
 
+// 🔔 ADD THIS IMPORT
 export default function Dashboard() {
   const transactions = useSelector(s => s.transactions.items)
+  const dispatch = useDispatch() // 🔥 ADD THIS
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -64,6 +66,8 @@ export default function Dashboard() {
         <h1 className="text-2xl font-extrabold gt">Dashboard</h1>
         <p className="text-sm text-white/40 mt-0.5">Your financial overview at a glance</p>
       </div>
+
+     
 
       {/* Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

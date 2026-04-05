@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addTransaction } from '../../features/transactions/transactionsSlice'
+import { addNotification } from '../../features/notifications/notificationSlice'
 import { CATEGORIES, CATEGORY_COLORS } from '../../data/mockTransactions'
 import { X, ChevronDown, Check } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -114,6 +115,7 @@ export default function AddTransactionModal({ onClose }) {
     if (!form.name.trim()) return setError('Name is required')
     if (!form.amount || isNaN(form.amount) || +form.amount <= 0) return setError('Enter a valid amount')
     dispatch(addTransaction({ ...form, amount: +form.amount }))
+    dispatch(addNotification(`Added: ${form.name} ₹${form.amount}`))
     toast.success(`"${form.name}" added successfully!`)
     onClose()
   }

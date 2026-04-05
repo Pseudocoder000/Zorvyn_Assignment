@@ -21,7 +21,7 @@
   /* ── LIGHT ── */
   html.light body {
     color: #0f172a;
-    background-color: #d8ede9;
+    background-color: #b9dfd8;
     background-image:
       radial-gradient(ellipse at 10% 20%, rgba(20,184,166,0.18) 0%, transparent 45%),
       radial-gradient(ellipse at 85% 75%, rgba(245,158,11,0.12) 0%, transparent 45%),
@@ -97,10 +97,10 @@
   /* ════ GRADIENT BUTTON ════ */
   .gb {
     background: linear-gradient(135deg, #14b8a6 0%, #f59e0b 100%);
-    color: white;
+    color: rgb(185, 138, 138);
     font-weight: 600;
     transition: all 0.25s ease;
-    box-shadow: 0 4px 16px rgba(20,184,166,0.35);
+    box-shadow: 0 4px 16px rgba(61, 79, 77, 0.35);
   }
   .gb:hover {
     box-shadow: 0 4px 28px rgba(20,184,166,0.55);

@@ -9,7 +9,7 @@ const transactionsSlice = createSlice({
   initialState: { items: initialItems, filter: { search: '', type: 'all', category: 'all', sort: 'date', order: 'desc' } },
   reducers: {
     addTransaction: (state, action) => {
-      state.items.unshift({ ...action.payload, id: nanoid() })
+        state.items.unshift(action.payload)
     },
     deleteTransaction: (state, action) => {
       state.items = state.items.filter(t => t.id !== action.payload)

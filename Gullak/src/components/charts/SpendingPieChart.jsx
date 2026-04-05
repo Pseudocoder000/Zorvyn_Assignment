@@ -7,6 +7,14 @@ import { motion } from "framer-motion"
 export default function SpendingPieChart({ transactions }) {
   const [isHovered, setIsHovered] = useState(false)
   const [activeId, setActiveId] = useState(null)
+  const [_, forceUpdate] = useState(0)
+
+  // ✅ Fix: trigger re-render on resize (no reload needed)
+  useEffect(() => {
+    const handleResize = () => forceUpdate(prev => prev + 1)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const data = useMemo(() => {
     const totals = {}
@@ -29,12 +37,14 @@ export default function SpendingPieChart({ transactions }) {
   const total = data.reduce((a, d) => a + d.value, 0)
 
   return (
-    <div className="flex flex-col gap-2 relative overflow-visible">
+    <div className="flex flex-col gap-2 relative overflow-visible w-full">
 
-      {/* 🔥 Rotating Pie */}
+      {/* 🔥 SAME SIZE (but responsive) */}
       <motion.div
-        style={{ height: 180 }}
-        animate={!isHovered ? { rotate: 360 } : { rotate: 0 }}
+        className="w-full h-[180px] sm:h-[190px] md:h-[200px] lg:h-[220px]"
+        animate={{
+          rotate: isHovered ? 0 : 360
+        }}
         transition={{
           repeat: Infinity,
           duration: 20,
@@ -57,12 +67,10 @@ export default function SpendingPieChart({ transactions }) {
           enableArcLinkLabels={false}
           enableArcLabels={false}
 
-          // 🔥 Track hover slice
           onMouseMove={(datum) => {
             setActiveId(datum.id)
           }}
 
-          // 🔥 Stable tooltip
           tooltip={({ datum }) => (
             <div
               style={{
@@ -131,7 +139,7 @@ export default function SpendingPieChart({ transactions }) {
                 }`}
               >
                 {isActiveItem
-                  ? formatCurrency(item.value)   // 🔥 ₹ ON HOVER
+                  ? formatCurrency(item.value)
                   : `${Math.round((item.value / total) * 100)}%`}
               </span>
             </div>
