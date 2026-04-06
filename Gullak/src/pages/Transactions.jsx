@@ -93,8 +93,8 @@ export default function Transactions() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 1000)
-    return () => clearTimeout(t)
+    const timer = setTimeout(() => setLoading(false), 1000)
+    return () => clearTimeout(timer)
   }, [])
 
   const dropdowns = [
