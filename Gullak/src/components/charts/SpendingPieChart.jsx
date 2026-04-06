@@ -40,22 +40,21 @@ export default function SpendingPieChart({ transactions }) {
     <div className="flex flex-col gap-2 relative overflow-visible w-full">
 
       {/*motion added frm here */}
-      <motion.div
-        className="w-full h-[180px] sm:h-[190px] md:h-[200px] lg:h-[220px]"
-        animate={{
-          rotate: isHovered ? 0 : 360
-        }}
-        transition={{
-          repeat: Infinity,
-          duration: 20,
-          ease: "linear"
-        }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => {
-          setIsHovered(false)
-          setActiveId(null)
-        }}
-      >
+     <motion.div
+  key={window.innerWidth}   
+  className="w-full h-[180px] sm:h-[190px] md:h-[200px] lg:h-[220px]"
+  animate={!isHovered ? { rotate: 360 } : { rotate: 0 }}
+  transition={{
+    repeat: Infinity,
+    duration: 20,
+    ease: "linear"
+  }}
+  onMouseEnter={() => setIsHovered(true)}
+  onMouseLeave={() => {
+    setIsHovered(false)
+    setActiveId(null)
+  }}
+>
         <ResponsivePie
           data={data}
           margin={{ top: 0, right: 0, bottom: 0, left: 0 }}

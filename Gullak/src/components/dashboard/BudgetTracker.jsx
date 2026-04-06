@@ -10,9 +10,11 @@ export default function BudgetTracker({ transactions }) {
     return transactions
       .filter(t => {
         const d = new Date(t.date)
-        return t.type === 'expense' &&
+        return (
+          t.type === 'expense' &&
           d.getMonth() === now.getMonth() &&
           d.getFullYear() === now.getFullYear()
+        )
       })
       .reduce((acc, t) => {
         acc[t.category] = (acc[t.category] || 0) + t.amount
@@ -33,21 +35,46 @@ export default function BudgetTracker({ transactions }) {
 
         return (
           <div key={cat}>
-            <div className="flex items-center justify-between mb-1.5">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full" style={{ background: color }} />
-                <span className="text-xs font-medium text-white/70">{cat}</span>
+
+            {/* HEADER (RESPONSIVE FIX) */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-1.5">
+
+              {/* LEFT */}
+              <div className="flex items-center gap-2 min-w-0">
+                <div
+                  className="w-2 h-2 rounded-full shrink-0"
+                  style={{ background: color }}
+                />
+
+                <span className="text-xs font-medium text-white/70 truncate max-w-[120px] sm:max-w-none">
+                  {cat}
+                </span>
+
                 {(isOver || isWarn) && (
-                  <AlertTriangle size={11} className={isOver ? 'text-red-400' : 'text-amber-400'} />
+                  <AlertTriangle
+                    size={11}
+                    className={isOver ? 'text-red-400' : 'text-amber-400'}
+                  />
                 )}
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className={`text-xs font-semibold ${isOver ? 'text-red-400' : 'text-white/60'}`}>
+
+              {/* RIGHT */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span
+                  className={`text-xs font-semibold ${
+                    isOver ? 'text-red-400' : 'text-white/60'
+                  } truncate`}
+                >
                   {formatCurrency(spent)}
                 </span>
-                <span className="text-xs text-white/25">/ {formatCurrency(limit)}</span>
+
+                <span className="text-xs text-white/25 whitespace-nowrap">
+                  / {formatCurrency(limit)}
+                </span>
               </div>
             </div>
+
+            {/* PROGRESS BAR */}
             <div className="h-1.5 rounded-full bg-white/[0.05] overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-700"
@@ -58,10 +85,15 @@ export default function BudgetTracker({ transactions }) {
                     : isWarn
                     ? 'linear-gradient(90deg, #fbbf24, #f59e0b)'
                     : `linear-gradient(90deg, ${color}, ${color}cc)`,
-                  boxShadow: isOver ? '0 0 8px rgba(248,113,113,0.5)' : isWarn ? '0 0 8px rgba(251,191,36,0.4)' : `0 0 8px ${color}44`,
+                  boxShadow: isOver
+                    ? '0 0 8px rgba(248,113,113,0.5)'
+                    : isWarn
+                    ? '0 0 8px rgba(251,191,36,0.4)'
+                    : `0 0 8px ${color}44`,
                 }}
               />
             </div>
+
           </div>
         )
       })}
