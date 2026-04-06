@@ -5,9 +5,9 @@ export default function PageLoader() {
   return (
     <div className="fixed inset-0 z-[9999] bg-[#05060f]/90 flex items-center justify-center">
 
-      {}
-      <div className="relative flex flex-col items-center">
+      <div className="relative flex flex-col items-center overflow-visible">
 
+        {/* Piggy animation */}
         <motion.img
           src={gullak}
           className="w-16 md:w-20"
@@ -16,20 +16,23 @@ export default function PageLoader() {
           transition={{ duration: 1, repeat: Infinity }}
         />
 
-        {/*coin adding ani*/}
+        {/* Coin animation (FIXED) */}
         <motion.div
-  className="w-4 h-4 bg-yellow-400 rounded-full absolute -top-6 left-1/2 -translate-x-1/2"
-  animate={{
-    y: [0, 40, 20],
-    opacity: [1, 1, 0]
-  }}
-  transition={{
-    duration: 1,
-    repeat: Infinity,
-    ease: "easeIn"
-  }}
-/>
+          className="w-4 h-4 bg-yellow-400 rounded-full absolute -top-2 left-1/2 -translate-x-1/2"
+          animate={{
+            y: [0, 35, 15],
+            opacity: [1, 1, 0]
+          }}
+          transition={{
+            duration: 1,
+            repeat: Infinity,
+            ease: "easeIn"
+          }}
+        />
+
+        {/* Text */}
         <p className="text-white/60 text-sm mt-3">Loading...</p>
+
       </div>
     </div>
   )
