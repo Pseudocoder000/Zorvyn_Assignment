@@ -18,18 +18,17 @@ export default function PageLoader() {
 
         {/*coin adding ani*/}
         <motion.div
-          className="w-4 h-4 bg-yellow-400 rounded-full absolute top-[-20px]"
-          animate={{
-            y: [0, 30, 10],
-            opacity: [1, 1, 0]
-          }}
-          transition={{
-            duration: 1,
-            repeat: Infinity,
-            ease: "easeIn"
-          }}
-        />
-
+  className="w-4 h-4 bg-yellow-400 rounded-full absolute -top-6 left-1/2 -translate-x-1/2"
+  animate={{
+    y: [0, 40, 20],
+    opacity: [1, 1, 0]
+  }}
+  transition={{
+    duration: 1,
+    repeat: Infinity,
+    ease: "easeIn"
+  }}
+/>
         <p className="text-white/60 text-sm mt-3">Loading...</p>
       </div>
     </div>
