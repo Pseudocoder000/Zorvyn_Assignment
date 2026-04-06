@@ -1,3 +1,4 @@
+//section comments are available to detect , thats to ease the code - readiblity
 import { useDispatch, useSelector } from 'react-redux'
 import { toggleTheme } from '../../features/theme/themeSlice'
 import { Bell, Sun, Moon } from 'lucide-react'
@@ -11,7 +12,7 @@ export default function Navbar() {
   const mode = useSelector(s => s.theme.mode)
   const { user } = useSelector(s => s.auth)
 
-  // 🔔 GET NOTIFICATIONS
+  // OTIFICATIONS
   const notifications = useSelector(s => s.notifications.items)
   const unreadCount = notifications.filter(n => !n.read).length
   
@@ -35,7 +36,7 @@ export default function Navbar() {
         <p className="text-sm font-semibold text-white">{user.name} </p>
       </div>
 
-      {/* 🐷 FLOATING AREA */}
+      {/* floating gullak area */}
       <div className="absolute left-[20%] right-[10%] h-full pointer-events-none">
         <motion.img
           src={gullak}
@@ -57,12 +58,12 @@ export default function Navbar() {
       {/* RIGHT */}
       <div className="ml-auto flex items-center gap-2 md:gap-3 z-10">
 
-        {/* 🔔 NOTIFICATION BELL (UPDATED) */}
+        {/*  NOTIFICATION BELL  */}
         <Link to="/notifications" className="relative">
           <div className="w-9 h-9 rounded-xl border border-white/[0.06] bg-white/[0.02] flex items-center justify-center text-white/40 hover:text-teal-400 transition">
             <Bell size={16} />
           </div>
-          {/* 🔴 COUNT BADGE */}
+          {/*  COUNT BADGE */}
           {unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] px-1.5 py-[1px] rounded-full">
               {unreadCount}
@@ -70,7 +71,7 @@ export default function Navbar() {
           )}
         </Link>
 
-        {/* 🌗 THEME BUTTON */}
+        {/*  THEME BUTTON */}
         <button
           onClick={() => dispatch(toggleTheme())}
           className="w-9 h-9 rounded-xl border border-white/[0.06] bg-white/[0.02] flex items-center justify-center text-white/40 hover:text-amber-400 transition"
@@ -78,7 +79,7 @@ export default function Navbar() {
           {mode === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
         </button>
 
-        {/* 👤 USER AVATAR */}
+        {/*  USER AVATAR */}
         <div className="w-10 h-10 rounded-full overflow-hidden">
   <img
     src={profileImg}
