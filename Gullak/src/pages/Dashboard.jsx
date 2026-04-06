@@ -12,12 +12,12 @@ import { SkeletonStatCard, SkeletonChart } from '../components/ui/SkeletonCard'
 // 🔔 ADD THIS IMPORT
 export default function Dashboard() {
   const transactions = useSelector(s => s.transactions.items)
-  const dispatch = useDispatch() // 🔥 ADD THIS
+  const dispatch = useDispatch() // 
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 1200)
-    return () => clearTimeout(t)
+   const timer = setTimeout(() => setLoading(false), 1200)
+return () => clearTimeout(timer)
   }, [])
 
   const stats = useMemo(() => {
