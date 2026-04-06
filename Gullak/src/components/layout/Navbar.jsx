@@ -1,11 +1,12 @@
 //section comments are available to detect , thats to ease the code - readiblity
+
 import { useDispatch, useSelector } from 'react-redux'
 import { toggleTheme } from '../../features/theme/themeSlice'
 import { Bell, Sun, Moon } from 'lucide-react'
 import { motion } from "framer-motion"
 import gullak from "../../stickers/gullak.png"
-import profileImg from "../../assets/profile.jpg";
-import { Link } from "react-router-dom"   
+import profileImg from "../../assets/profile.jpg"
+import { Link } from "react-router-dom"
 
 export default function Navbar() {
   const dispatch = useDispatch()
@@ -27,19 +28,19 @@ export default function Navbar() {
 
       {/* LEFT (LOGO ALWAYS VISIBLE) */}
       <div className="flex md:hidden items-center gap-2 z-10">
-  <img src={gullak} className="w-7 h-7" />
-  <span className="text-sm font-bold">Gullak</span>
-</div>
+        <img src={gullak} className="w-7 h-7" />
+        <span className="text-sm font-bold">Gullak</span>
+      </div>
 
-      {/* CENTER GREETING (SAME FOR ALL SCREENS) */}
+      {/* CENTER GREETING */}
       <div className="hidden md:flex flex-col ml-4 z-10">
-  <p className="text-xs text-white/40">{greeting},</p>
-  <p className="text-sm font-semibold text-white">
-    {user?.name}
-  </p>
-</div>
+        <p className="text-xs text-white/40">{greeting},</p>
+        <p className="text-sm font-semibold text-white">
+          {user?.name}
+        </p>
+      </div>
 
-      {/* FLOATING GULLAK (VISIBLE EVERYWHERE, JUST SMALLER) */}
+      {/* FLOATING GULLAK */}
       <div className="hidden md:block absolute left-[20%] right-[10%] h-full pointer-events-none">
         <motion.img
           src={gullak}
@@ -74,7 +75,7 @@ export default function Navbar() {
           )}
         </Link>
 
-        {/* THEME BUTTON */}
+        {/* THEME TOGGLE (FIXED) */}
         <button
           onClick={() => dispatch(toggleTheme())}
           className="w-8 h-8 md:w-9 md:h-9 rounded-xl border border-white/[0.06] bg-white/[0.02] flex items-center justify-center text-white/40 hover:text-amber-400 transition"
