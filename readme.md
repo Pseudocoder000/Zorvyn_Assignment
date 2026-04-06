@@ -25,7 +25,7 @@ Gullak is a modern and intuitive personal finance dashboard designed to help use
 ## 🚀 Getting Started
 
 ```bash
-git clone https://github.com/your-username/gullak.git
+git clone 
 cd gullak
 npm install
 npm run dev

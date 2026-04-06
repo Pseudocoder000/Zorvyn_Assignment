@@ -11,7 +11,7 @@ export default function Navbar() {
   const mode = useSelector(s => s.theme.mode)
   const { user } = useSelector(s => s.auth)
 
-  // 🔔 GET NOTIFICATIONS
+  // NOTIFICATIONS
   const notifications = useSelector(s => s.notifications.items)
   const unreadCount = notifications.filter(n => !n.read).length
   
@@ -26,7 +26,7 @@ export default function Navbar() {
   return (
     <header className="relative w-full h-16 flex items-center px-4 md:px-6 border-b border-white/[0.05]">
 
-      {/* LEFT */}
+      {}
       
 
       {/* GREETING */}
@@ -35,7 +35,7 @@ export default function Navbar() {
         <p className="text-sm font-semibold text-white">{user.name} </p>
       </div>
 
-      {/* 🐷 FLOATING AREA */}
+      {/*FLOATING AREA */}
       <div className="absolute left-[20%] right-[10%] h-full pointer-events-none">
         <motion.img
           src={gullak}
@@ -70,7 +70,7 @@ export default function Navbar() {
           )}
         </Link>
 
-        {/* 🌗 THEME BUTTON */}
+        {/* theme */}
         <button
           onClick={() => dispatch(toggleTheme())}
           className="w-9 h-9 rounded-xl border border-white/[0.06] bg-white/[0.02] flex items-center justify-center text-white/40 hover:text-amber-400 transition"
@@ -78,7 +78,7 @@ export default function Navbar() {
           {mode === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
         </button>
 
-        {/* 👤 USER AVATAR */}
+        {/* user */}
         <div className="w-10 h-10 rounded-full overflow-hidden">
   <img
     src={profileImg}

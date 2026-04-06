@@ -9,7 +9,7 @@ export default function SpendingPieChart({ transactions }) {
   const [activeId, setActiveId] = useState(null)
   const [_, forceUpdate] = useState(0)
 
-  // ✅ Fix: trigger re-render on resize (no reload needed)
+  // trigger rerender
   useEffect(() => {
     const handleResize = () => forceUpdate(prev => prev + 1)
     window.addEventListener('resize', handleResize)
@@ -39,7 +39,7 @@ export default function SpendingPieChart({ transactions }) {
   return (
     <div className="flex flex-col gap-2 relative overflow-visible w-full">
 
-      {/* 🔥 SAME SIZE (but responsive) */}
+      {/*motion added frm here */}
       <motion.div
         className="w-full h-[180px] sm:h-[190px] md:h-[200px] lg:h-[220px]"
         animate={{

@@ -39,7 +39,7 @@ export default function Sidebar() {
         boxShadow: isLight ? '4px 0 24px rgba(20,184,166,0.06)' : 'none',
       }}
     >
-      {/* Logo */}
+      {}
       <div className="flex items-center gap-3 px-2">
         {/* <div className="w-9 h-9 rounded-2xl gb flex items-center justify-center shrink-0"> */}
         <div className="w-16 h-9 rounded-2xl flex items-center justify-center shrink-0">
@@ -49,7 +49,7 @@ export default function Sidebar() {
         <span className="text-2xl font-extrabold gt">Gullak</span>
       </div>
 
-      {/* User Profile Card */}
+      {}
       <div
         className="p-4 flex flex-col gap-3 rounded-2xl transition-all duration-300"
         style={isLight ? {
@@ -62,7 +62,7 @@ export default function Sidebar() {
           boxShadow: '0 4px 24px rgba(0,0,0,0.3)',
         }}
       >
-        {/* Avatar + Name */}
+        {}
         <div className="flex items-center gap-3">
          <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0">
   <img
@@ -81,7 +81,7 @@ export default function Sidebar() {
           </div>
         </div>
 
-        {/* Financial Health */}
+        {/* financial health*/}
         <div>
           <div className="flex items-center justify-between mb-2">
             <span className={`text-xs font-medium ${isLight ? 'text-slate-500' : 'text-white/40'}`}>

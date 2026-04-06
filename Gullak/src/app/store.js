@@ -4,7 +4,7 @@ import authReducer from '../features/auth/authSlice'
 import themeReducer from '../features/theme/themeSlice'
 import notificationReducer from '../features/notifications/notificationSlice'
 
-// 🔥 load notifications
+// load notifications
 const loadNotifications = () => {
   try {
     const data = localStorage.getItem('Gullak_notifications')
@@ -14,7 +14,7 @@ const loadNotifications = () => {
   }
 }
 
-// 🔥 localStorage middleware
+//localStorage middleware
 const localStorageMiddleware = store => next => action => {
   const result = next(action)
   const state = store.getState()
@@ -23,7 +23,7 @@ const localStorageMiddleware = store => next => action => {
   localStorage.setItem('Gullak_role', state.auth.role)
   localStorage.setItem('Gullak_theme', state.theme.mode)
 
-  // ✅ FIXED (safe access)
+  //access
   localStorage.setItem(
     'Gullak_notifications',
     JSON.stringify(state.notifications?.items || [])
@@ -37,10 +37,10 @@ export const store = configureStore({
     transactions: transactionsReducer,
     auth: authReducer,
     theme: themeReducer,
-    notifications: notificationReducer, // ✅ correct key
+    notifications: notificationReducer, 
   },
 
-  // ✅ FIXED (safe preload)
+  // preload
   preloadedState: {
     notifications: {
       items: loadNotifications() || []

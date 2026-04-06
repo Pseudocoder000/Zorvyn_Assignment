@@ -5,7 +5,7 @@ export default function PageLoader() {
   return (
     <div className="fixed inset-0 z-[9999] bg-[#05060f]/90 flex items-center justify-center">
 
-      {/* 🐷 Gullak */}
+      {}
       <div className="relative flex flex-col items-center">
 
         <motion.img
@@ -16,7 +16,7 @@ export default function PageLoader() {
           transition={{ duration: 1, repeat: Infinity }}
         />
 
-        {/* 💰 Coin */}
+        {/*coin adding ani*/}
         <motion.div
           className="w-4 h-4 bg-yellow-400 rounded-full absolute top-[-20px]"
           animate={{
