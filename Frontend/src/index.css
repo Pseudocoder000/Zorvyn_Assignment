@@ -4,10 +4,13 @@
 @tailwind utilities;
 
 @layer base {
-  html, body, #root { height: 100%; }
+  html, body, #root { height: 100%; 
+   overflow-x: hidden;
+  }
 
   /* ── DARK (default) ── */
   body {
+    
     font-family: 'Inter', sans-serif;
     color: hsl(210, 43%, 92%);
     background-color: #080812;
@@ -196,4 +199,15 @@
     background: rgba(20,184,166,0.2);
     border-radius: 99px;
   }
+}
+html, body, #root, * {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#root::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none;
 }
