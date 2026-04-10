@@ -8,6 +8,9 @@ import Navbar from "./components/layout/Navbar"
 import NotificationsPage from "./pages/NotificationsPage"
 
 import Layout from './components/layout/Layout'
+import Landing from './pages/landing'
+import Login from './pages/login'
+import Signup from './pages/signup'
 import Dashboard from './pages/Dashboard'
 import Transactions from './pages/Transactions'
 import Insights from './pages/Insights'
@@ -105,9 +108,10 @@ export default function App() {
       {/* 📄 Routes */}
       <Routes location={location}>
         
-        {/* Main layout */}
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route element={<Layout />}>
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="transactions" element={<Transactions />} />
           <Route path="insights" element={<Insights />} />

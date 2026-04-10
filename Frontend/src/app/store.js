@@ -23,7 +23,18 @@ const localStorageMiddleware = store => next => action => {
   localStorage.setItem('Gullak_role', state.auth.role)
   localStorage.setItem('Gullak_theme', state.theme.mode)
 
-  //access
+  if (state.auth.token) {
+    localStorage.setItem('Gullak_token', state.auth.token)
+  } else {
+    localStorage.removeItem('Gullak_token')
+  }
+
+  if (state.auth.user) {
+    localStorage.setItem('Gullak_user', JSON.stringify(state.auth.user))
+  } else {
+    localStorage.removeItem('Gullak_user')
+  }
+
   localStorage.setItem(
     'Gullak_notifications',
     JSON.stringify(state.notifications?.items || [])
