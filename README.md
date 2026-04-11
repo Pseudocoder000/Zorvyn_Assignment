@@ -1,7 +1,7 @@
 ## 🌐 Live Deployment
 
-* 🎯 **Frontend (Vercel):** https://your-frontend-link.vercel.app
-* ⚙️ **Backend (Render):** https://your-backend-link.onrender.com
+* 🎯 **Frontend (Vercel):** https://gullak-three.vercel.app/
+* ⚙️ **Backend (Render):** https://gullak-7ghu.onrender.com/
 
 > The application is fully deployed and accessible to real users with live database integration via MongoDB Atlas.
 
