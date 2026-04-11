@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { useMemo, useState, useEffect } from 'react'
-import { Wallet, TrendingUp, TrendingDown, Activity } from 'lucide-react'
+import { useMemo, useEffect } from 'react'
+import { Wallet, TrendingUp, TrendingDown, Activity, AlertCircle } from 'lucide-react'
+import { toast } from 'react-hot-toast'
 import StatCard from '../components/ui/StatCard'
 import BalanceTrendChart from '../components/charts/BalanceTrendChart'
 import SpendingPieChart from '../components/charts/SpendingPieChart'
@@ -8,19 +9,54 @@ import RecentTransactions from '../components/dashboard/RecentTransactions'
 import BudgetTracker from '../components/dashboard/BudgetTracker'
 import { formatCurrency } from '../utils/formatters'
 import { SkeletonStatCard, SkeletonChart } from '../components/ui/SkeletonCard'
+import {
+  fetchTransactions,
+  fetchDashboardSummary,
+  fetchSpendingByCategory,
+  fetchMonthlyTrend,
+} from '../features/transactions/transactionsSlice'
 
-// 🔔 ADD THIS IMPORT
 export default function Dashboard() {
+  const dispatch = useDispatch()
   const transactions = useSelector(s => s.transactions.items)
-  const dispatch = useDispatch() // 
-  const [loading, setLoading] = useState(true)
+  const dashboard = useSelector(s => s.transactions.dashboard)
+  const { loading, error } = useSelector(s => s.transactions)
+  const user = useSelector(s => s.auth.user)
 
+  // 🔄 Fetch real data on mount
   useEffect(() => {
-   const timer = setTimeout(() => setLoading(false), 1200)
-return () => clearTimeout(timer)
-  }, [])
+    const loadDashboardData = async () => {
+      try {
+        // Fetch all dashboard data in parallel
+        await Promise.all([
+          dispatch(fetchTransactions({ page: 1, limit: 20 })),
+          dispatch(fetchDashboardSummary()),
+          dispatch(fetchSpendingByCategory()),
+          dispatch(fetchMonthlyTrend(6)),
+        ])
+      } catch (err) {
+        toast.error('Failed to load dashboard data')
+      }
+    }
 
+    loadDashboardData()
+  }, [dispatch])
+
+  // 📊 Calculate stats from real data (from dashboard.summary or transactions)
   const stats = useMemo(() => {
+    // Use server data if available
+    if (dashboard.summary) {
+      return {
+        balance: dashboard.summary.totalBalance || 0,
+        income: dashboard.summary.thisMonthIncome || 0,
+        expense: dashboard.summary.thisMonthExpense || 0,
+        count: dashboard.summary.transactionCount || 0,
+        incomeChange: dashboard.summary.incomeChangePercent || 0,
+        expenseChange: dashboard.summary.expenseChangePercent || 0,
+      }
+    }
+
+    // Fallback to calculated values from transactions
     const now = new Date()
     const thisMonth = transactions.filter(t => {
       const d = new Date(t.date)
@@ -31,34 +67,37 @@ return () => clearTimeout(timer)
       const lm = new Date(now.getFullYear(), now.getMonth() - 1, 1)
       return d.getMonth() === lm.getMonth() && d.getFullYear() === lm.getFullYear()
     })
-    const income  = thisMonth.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0)
+    const income = thisMonth.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0)
     const expense = thisMonth.filter(t => t.type === 'expense').reduce((a, t) => a + t.amount, 0)
-    const lIncome  = lastMonth.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0)
+    const lIncome = lastMonth.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0)
     const lExpense = lastMonth.filter(t => t.type === 'expense').reduce((a, t) => a + t.amount, 0)
     const balance = transactions.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0)
-                  - transactions.filter(t => t.type === 'expense').reduce((a, t) => a + t.amount, 0)
+      - transactions.filter(t => t.type === 'expense').reduce((a, t) => a + t.amount, 0)
     return {
       income, expense, balance, count: thisMonth.length,
-      incomeChange:  lIncome  ? Math.round(((income  - lIncome)  / lIncome)  * 100) : 0,
+      incomeChange: lIncome ? Math.round(((income - lIncome) / lIncome) * 100) : 0,
       expenseChange: lExpense ? Math.round(((expense - lExpense) / lExpense) * 100) : 0,
     }
-  }, [transactions])
+  }, [dashboard.summary, transactions])
 
-  if (loading) return (
-    <div className="space-y-6">
-      <div className="space-y-1">
-        <div className="w-36 h-7 animate-pulse bg-white/[0.04] rounded-xl" />
-        <div className="w-52 h-4 animate-pulse bg-white/[0.03] rounded-lg" />
+  // 📱 Loading state
+  if (loading && transactions.length === 0 && !dashboard.summary) {
+    return (
+      <div className="space-y-6">
+        <div className="space-y-1">
+          <div className="w-36 h-7 animate-pulse bg-white/[0.04] rounded-xl" />
+          <div className="w-52 h-4 animate-pulse bg-white/[0.03] rounded-lg" />
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => <SkeletonStatCard key={i} />)}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+          <div className="lg:col-span-3 gc p-5"><SkeletonChart /></div>
+          <div className="lg:col-span-2 gc p-5"><SkeletonChart /></div>
+        </div>
       </div>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {Array.from({ length: 4 }).map((_, i) => <SkeletonStatCard key={i} />)}
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-        <div className="lg:col-span-3 gc p-5"><SkeletonChart /></div>
-        <div className="lg:col-span-2 gc p-5"><SkeletonChart /></div>
-      </div>
-    </div>
-  )
+    )
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -67,7 +106,16 @@ return () => clearTimeout(timer)
         <p className="text-sm text-white/40 mt-0.5">Your financial overview at a glance</p>
       </div>
 
-     
+      {/* 🚨 Error State */}
+      {error && (
+        <div className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
+          <AlertCircle size={20} className="text-red-400 flex-shrink-0" />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-red-300">{error}</p>
+            <p className="text-xs text-red-200/70 mt-0.5">Please refresh the page to try again</p>
+          </div>
+        </div>
+      )}
 
       {/* Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

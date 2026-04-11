@@ -55,18 +55,7 @@ const Landing = () => {
     },
   }
 
-  const floatingVariants = {
-    animate: {
-      y: [0, -15, 0],
-      x: [0, 5, 0],
-      rotate: [0, 5, 0],
-      transition: {
-        duration: 3,
-        repeat: Infinity,
-        ease: "easeInOut",
-      },
-    },
-  }
+
 
   const slideInVariants = {
     hidden: { opacity: 0, x: -50 },
@@ -219,7 +208,7 @@ const Landing = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
           >
-            <Link to="/dashboard">
+            <Link to="/demo">
               <motion.button 
                 whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(var(--primary), 0.3)" }}
                 whileTap={{ scale: 0.95 }}

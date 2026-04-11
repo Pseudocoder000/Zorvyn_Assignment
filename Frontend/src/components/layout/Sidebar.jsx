@@ -3,8 +3,7 @@ import { LayoutDashboard, ArrowLeftRight, Lightbulb, TrendingUp, ShieldCheck, Ey
 import { useSelector, useDispatch } from 'react-redux'
 import { setRole } from '../../features/auth/authSlice'
 import { formatCurrency } from '../../utils/formatters'
-import gullak from "../../stickers/gullak.png" 
-import profileImg from "../../assets/profile.jpg";
+import gullak from "../../stickers/gullak.png"
 
 const links = [
   { to: '/dashboard',    label: 'Dashboard',    icon: LayoutDashboard },
@@ -19,12 +18,46 @@ export default function Sidebar() {
   const mode = useSelector(s => s.theme.mode)
   const isLight = mode === 'light'
   const transactions = useSelector(s => s.transactions.items)
+  const dashboard = useSelector(s => s.transactions.dashboard)
 
-  const totalIncome  = transactions.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0)
-  const totalExpense = transactions.filter(t => t.type === 'expense').reduce((a, t) => a + t.amount, 0)
-  const balance      = totalIncome - totalExpense
-  const health       = Math.min(100, Math.max(0, Math.round(((totalIncome - totalExpense) / Math.max(totalIncome, 1)) * 100)))
-  const healthColor  = health > 60 ? '#14b8a6' : health > 30 ? '#f59e0b' : '#f87171'
+  // 💰 Calculate balance from real data
+  const getBalance = () => {
+    // Use server data if available
+    if (dashboard.summary?.totalBalance !== undefined) {
+      return dashboard.summary.totalBalance
+    }
+    // Fallback to calculated balance from transactions
+    const totalIncome = transactions.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0)
+    const totalExpense = transactions.filter(t => t.type === 'expense').reduce((a, t) => a + t.amount, 0)
+    return totalIncome - totalExpense
+  }
+
+  const balance = getBalance()
+  
+  // 💚 Calculate financial health
+  const getHealthScore = () => {
+    if (dashboard.summary?.healthScore !== undefined) {
+      return dashboard.summary.healthScore
+    }
+    // Fallback calculation: ratio of income to total transactions
+    if (transactions.length === 0) return 50
+    const incomeCount = transactions.filter(t => t.type === 'income').length
+    const expenseCount = transactions.filter(t => t.type === 'expense').length
+    const ratio = expenseCount > 0 ? (incomeCount / (incomeCount + expenseCount)) * 100 : 50
+    return Math.min(100, Math.max(0, Math.round(ratio)))
+  }
+  
+  const health = getHealthScore()
+  const healthColor = health > 60 ? '#14b8a6' : health > 30 ? '#f59e0b' : '#f87171'
+
+  // 📸 Get user avatar - use profile image or initials
+  const getInitials = (name) => {
+    return name
+      ?.split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase() || 'U'
+  }
 
   return (
     <aside
@@ -64,19 +97,25 @@ export default function Sidebar() {
       >
         {}
         <div className="flex items-center gap-3">
-         <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0">
-  <img
-    src={profileImg}
-    alt="profile"
-    className="w-full h-full object-cover"
-  />
+         <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 flex items-center justify-center bg-gradient-to-br from-teal-400/20 to-blue-400/20 border border-white/[0.06]">
+  {user?.profileImage ? (
+    <img
+      src={user.profileImage}
+      alt={user.name}
+      className="w-full h-full object-cover"
+    />
+  ) : (
+    <span className="text-xs font-bold text-teal-300">
+      {getInitials(user?.name)}
+    </span>
+  )}
 </div>
           <div className="min-w-0">
             <p className={`text-sm font-bold truncate ${isLight ? 'text-slate-700' : 'text-white'}`}>
-              {user.name}
+              {user?.name}
             </p>
             <p className={`text-xs truncate ${isLight ? 'text-slate-400' : 'text-white/40'}`}>
-              {user.email}
+              {user?.email}
             </p>
           </div>
         </div>

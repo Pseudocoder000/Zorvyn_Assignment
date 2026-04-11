@@ -1,8 +1,9 @@
 import { Routes, Route, Navigate, useLocation } from "react-router-dom"
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { useEffect, useState, useRef } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { motion } from "framer-motion"
+import { fetchUser } from './features/auth/authSlice'
 
 import Navbar from "./components/layout/Navbar"
 import NotificationsPage from "./pages/NotificationsPage"
@@ -12,16 +13,36 @@ import Landing from './pages/landing'
 import Login from './pages/login'
 import Signup from './pages/signup'
 import Dashboard from './pages/Dashboard'
+import DemoDashboard from './pages/DemoDashboard'
+import DemoTransactions from './pages/DemoTransactions'
+import DemoInsights from './pages/DemoInsights'
 import Transactions from './pages/Transactions'
 import Insights from './pages/Insights'
+import Profile from './pages/Profile'
 
 import gullak from "./stickers/gullak.png"
 
 export default function App() {
+  const dispatch = useDispatch()
   const mode = useSelector(s => s.theme.mode)
+  const { token, user, loading: authLoading } = useSelector(s => s.auth)
   const location = useLocation()
   const [loading, setLoading] = useState(false)
+  const [initialCheckDone, setInitialCheckDone] = useState(false)
   const firstLoad = useRef(true)
+
+  // 🔐 Auth persistence: Fetch user on app load
+  useEffect(() => {
+    const checkAuth = async () => {
+      const savedToken = localStorage.getItem('Gullak_token')
+      if (savedToken && !user) {
+        await dispatch(fetchUser())
+      }
+      setInitialCheckDone(true)
+    }
+    
+    checkAuth()
+  }, [dispatch, user])
 
   // 🌗 Theme handling
   useEffect(() => {
@@ -46,6 +67,27 @@ export default function App() {
 
     return () => clearTimeout(timer)
   }, [location.pathname])
+
+  // 🔐 Redirect unauthenticated users
+  const isAuthenticated = !!token && !!user
+  const isPublicRoute = ['/login', '/signup', '/'].includes(location.pathname)
+
+  if (!initialCheckDone || authLoading) {
+    return (
+      <div className="fixed inset-0 z-[9999] bg-[#05060f]/90 flex items-center justify-center">
+        <div className="relative flex flex-col items-center">
+          <motion.img
+            src={gullak}
+            className="w-16 md:w-20"
+            initial={{ scale: 0.8 }}
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 1, repeat: Infinity }}
+          />
+          <p className="text-white/60 text-sm mt-3">Loading Gullak...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <>
@@ -111,14 +153,18 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/demo" element={<DemoDashboard />} />
+        <Route path="/demo/transactions" element={<DemoTransactions />} />
+        <Route path="/demo/insights" element={<DemoInsights />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
+        
+        {/* 📊 Authenticated Routes with Layout */}
         <Route element={<Layout />}>
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="transactions" element={<Transactions />} />
           <Route path="insights" element={<Insights />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
-
-        {/* 🔔 Notification Page Route */}
-        <Route path="/notifications" element={<NotificationsPage />} />
 
       </Routes>
     </>
