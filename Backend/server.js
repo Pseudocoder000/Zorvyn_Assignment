@@ -3,39 +3,59 @@ import cors from 'cors'
 import morgan from 'morgan'
 import dotenv from 'dotenv'
 import connectDB from './config/db.js'
+
 import authRoutes from './routes/authRoutes.js'
 import transactionRoutes from './routes/transactionRoutes.js'
 import dashboardRoutes from './routes/dashboardRoutes.js'
 
-// Load environment variables
+// Load env
 dotenv.config()
 
-// Connect to database
+// Connect DB
 await connectDB()
 
-// Initialize express app
+// App init
 const app = express()
 
-// Middleware
+// ================= MIDDLEWARE =================
+
+// Body parser
 app.use(express.json())
+
+// Logger
 app.use(morgan('dev'))
+
+// 🔥 CORS FIX (IMPORTANT)
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: [
+    'http://localhost:5173',
+    'https://gullak-three.vercel.app'
+  ],
   credentials: true,
 }))
 
+// ================= ROUTES =================
+
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ status: 'Server is running' })
+  res.json({ status: 'Server is running 🚀' })
 })
 
-// Routes
+// Root route (optional but professional)
+app.get('/', (req, res) => {
+  res.send('🚀 Gullak API is Live')
+})
+
+// API routes
 const apiPrefix = process.env.API_PREFIX || '/api'
+
 app.use(`${apiPrefix}/auth`, authRoutes)
 app.use(`${apiPrefix}/transactions`, transactionRoutes)
 app.use(`${apiPrefix}/dashboard`, dashboardRoutes)
 
-// 404 handler
+// ================= ERROR HANDLING =================
+
+// 404
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -43,7 +63,7 @@ app.use((req, res) => {
   })
 })
 
-// Error handler
+// Server error
 app.use((err, req, res, next) => {
   console.error(err.stack)
   res.status(500).json({
@@ -52,11 +72,13 @@ app.use((err, req, res, next) => {
   })
 })
 
-// Start server
+// ================= START SERVER =================
+
 const PORT = process.env.PORT || 5000
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`)
-  console.log(`📝 API docs: http://localhost:${PORT}/health`)
+  console.log(`📝 Health: http://localhost:${PORT}/health`)
 })
 
 export default app
