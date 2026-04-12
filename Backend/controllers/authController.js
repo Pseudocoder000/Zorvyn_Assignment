@@ -124,7 +124,7 @@ export const getMe = async (req, res) => {
 // @access  Private
 export const updateProfile = async (req, res) => {
   try {
-    const { name, phoneNumber, profileImage, bankName, accountNumber, ifscCode } = req.body
+    const { name, phoneNumber, profileImage, bankName, accountNumber, ifscCode, initialBalance } = req.body
 
     const updateData = {}
     if (name) updateData.name = name
@@ -133,6 +133,7 @@ export const updateProfile = async (req, res) => {
     if (bankName) updateData.bankName = bankName
     if (accountNumber) updateData.accountNumber = accountNumber
     if (ifscCode) updateData.ifscCode = ifscCode
+    if (initialBalance !== undefined) updateData.initialBalance = Number(initialBalance)
 
     const user = await User.findByIdAndUpdate(
       req.user.id,

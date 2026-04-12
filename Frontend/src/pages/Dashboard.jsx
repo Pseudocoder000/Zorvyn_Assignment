@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { useMemo, useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Wallet, TrendingUp, TrendingDown, Activity, AlertCircle } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import StatCard from '../components/ui/StatCard'
@@ -42,21 +42,15 @@ export default function Dashboard() {
     loadDashboardData()
   }, [dispatch])
 
-  // 📊 Calculate stats from real data (from dashboard.summary or transactions)
+  // 📊 Calculate stats from transactions with CORRECT balance formula
   const stats = useMemo(() => {
-    // Use server data if available
-    if (dashboard.summary) {
-      return {
-        balance: dashboard.summary.totalBalance || 0,
-        income: dashboard.summary.thisMonthIncome || 0,
-        expense: dashboard.summary.thisMonthExpense || 0,
-        count: dashboard.summary.transactionCount || 0,
-        incomeChange: dashboard.summary.incomeChangePercent || 0,
-        expenseChange: dashboard.summary.expenseChangePercent || 0,
-      }
-    }
+    console.log('📊 Calculating stats...', { 
+      transactionCount: transactions.length, 
+      initialBalance: user?.initialBalance,
+      user: user?.name 
+    })
 
-    // Fallback to calculated values from transactions
+    // Calculate from transactions (most reliable source)
     const now = new Date()
     const thisMonth = transactions.filter(t => {
       const d = new Date(t.date)
@@ -67,18 +61,26 @@ export default function Dashboard() {
       const lm = new Date(now.getFullYear(), now.getMonth() - 1, 1)
       return d.getMonth() === lm.getMonth() && d.getFullYear() === lm.getFullYear()
     })
-    const income = thisMonth.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0)
-    const expense = thisMonth.filter(t => t.type === 'expense').reduce((a, t) => a + t.amount, 0)
-    const lIncome = lastMonth.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0)
-    const lExpense = lastMonth.filter(t => t.type === 'expense').reduce((a, t) => a + t.amount, 0)
-    const balance = transactions.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0)
-      - transactions.filter(t => t.type === 'expense').reduce((a, t) => a + t.amount, 0)
+    
+    const income = thisMonth.filter(t => t.type === 'income').reduce((a, t) => a + (t.amount || 0), 0)
+    const expense = thisMonth.filter(t => t.type === 'expense').reduce((a, t) => a + (t.amount || 0), 0)
+    const lIncome = lastMonth.filter(t => t.type === 'income').reduce((a, t) => a + (t.amount || 0), 0)
+    const lExpense = lastMonth.filter(t => t.type === 'expense').reduce((a, t) => a + (t.amount || 0), 0)
+    
+    // ✅ FIXED: Include initialBalance in balance calculation
+    const totalIncome = transactions.filter(t => t.type === 'income').reduce((a, t) => a + (t.amount || 0), 0)
+    const totalExpense = transactions.filter(t => t.type === 'expense').reduce((a, t) => a + (t.amount || 0), 0)
+    const initialBalance = user?.initialBalance || 0
+    const balance = initialBalance + totalIncome - totalExpense
+    
+    console.log('💰 Balance Calculation:', { totalIncome, totalExpense, initialBalance, balance })
+    
     return {
       income, expense, balance, count: thisMonth.length,
       incomeChange: lIncome ? Math.round(((income - lIncome) / lIncome) * 100) : 0,
       expenseChange: lExpense ? Math.round(((expense - lExpense) / lExpense) * 100) : 0,
     }
-  }, [dashboard.summary, transactions])
+  }, [transactions, user?.initialBalance])
 
   // 📱 Loading state
   if (loading && transactions.length === 0 && !dashboard.summary) {
@@ -130,7 +132,7 @@ export default function Dashboard() {
         <div className="lg:col-span-3 gc p-5">
           <h2 className="text-sm font-semibold text-white mb-0.5">Balance Trend</h2>
           <p className="text-xs text-white/30 mb-4">Last 6 months</p>
-          <BalanceTrendChart transactions={transactions} />
+          <BalanceTrendChart transactions={transactions} initialBalance={user?.initialBalance || 0} />
         </div>
         <div className="lg:col-span-2 gc p-5">
           <h2 className="text-sm font-semibold text-white mb-0.5">Spending Breakdown</h2>

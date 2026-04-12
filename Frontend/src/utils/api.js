@@ -136,3 +136,60 @@ export const getBudgetStatus = async () => {
     method: 'GET',
   })
 }
+
+// ==================== CSV UPLOAD ENDPOINTS ====================
+
+/**
+ * Upload CSV file for bulk transaction import
+ * @param {File} file - CSV file from input
+ * @returns {Promise} Response with uploaded transactions
+ */
+export const uploadCSV = async (file) => {
+  const formData = new FormData()
+  formData.append('file', file)
+
+  const token = getToken()
+  const headers = {}
+  
+  if (token) {
+    headers.Authorization = `Bearer ${token}`
+  }
+
+  const response = await fetch(buildUrl('/transactions/upload-csv'), {
+    method: 'POST',
+    headers,
+    body: formData,
+  })
+
+  const body = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    throw new Error(body?.message || response.statusText || 'CSV upload failed')
+  }
+
+  return body
+}
+
+/**
+ * Get CSV sample file
+ * @returns {Promise} Sample CSV data
+ */
+export const getCSVSample = async () => {
+  const token = getToken()
+  const headers = {}
+  
+  if (token) {
+    headers.Authorization = `Bearer ${token}`
+  }
+
+  const response = await fetch(buildUrl('/transactions/csv/sample'), {
+    method: 'GET',
+    headers,
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to get CSV sample')
+  }
+
+  return response.text()
+}

@@ -16,6 +16,7 @@ export default function Profile() {
     name: user?.name || '',
     email: user?.email || '',
     phoneNumber: user?.phoneNumber || '',
+    initialBalance: user?.initialBalance || 0,
     profileImage: user?.profileImage || '',
     bankName: user?.bankName || '',
     accountNumber: user?.accountNumber || '',
@@ -320,6 +321,28 @@ export default function Profile() {
                 }`}
               />
               {errors.phoneNumber && <p className="text-red-400 text-xs mt-1">{errors.phoneNumber}</p>}
+            </div>
+
+            {/* Initial Balance */}
+            <div>
+              <label className={`block text-sm font-semibold mb-2 ${isLight ? 'text-slate-700' : 'text-gray-300'}`}>
+                Initial Bank Balance (₹)
+              </label>
+              <input
+                type="number"
+                name="initialBalance"
+                value={formData.initialBalance}
+                onChange={handleChange}
+                placeholder="Your starting balance (e.g., 50000)"
+                className={`w-full px-4 py-2.5 rounded-xl border outline-none transition-all ${
+                  isLight
+                    ? `border-teal-200 bg-white text-slate-800 focus:border-teal-400 focus:ring-teal-400/20 placeholder-slate-400`
+                    : `border-white/[0.08] bg-white/[0.04] text-white focus:border-teal-500/50 focus:ring-teal-500/30 placeholder-gray-600`
+                }`}
+              />
+              <p className={`text-xs mt-1 ${isLight ? 'text-slate-400' : 'text-gray-500'}`}>
+                This is your starting bank balance. Transactions are added to this amount.
+              </p>
             </div>
           </div>
         </div>

@@ -1,8 +1,10 @@
 import { Link, useLocation } from 'react-router-dom'
-import { LayoutDashboard, ArrowLeftRight, Lightbulb, TrendingUp, ShieldCheck, Eye } from 'lucide-react'
+import { LayoutDashboard, ArrowLeftRight, Lightbulb, TrendingUp, ShieldCheck, Eye, Info, X } from 'lucide-react'
 import { useSelector, useDispatch } from 'react-redux'
+import { useState } from 'react'
 import { setRole } from '../../features/auth/authSlice'
 import { formatCurrency } from '../../utils/formatters'
+import { calculateFinancialHealth } from '../../utils/financialHealth'
 import gullak from "../../stickers/gullak.png"
 
 const links = [
@@ -19,36 +21,33 @@ export default function Sidebar() {
   const isLight = mode === 'light'
   const transactions = useSelector(s => s.transactions.items)
   const dashboard = useSelector(s => s.transactions.dashboard)
+  const [showHealthBreakdown, setShowHealthBreakdown] = useState(false)
 
-  // 💰 Calculate balance from real data
+  // 💰 Calculate balance with CORRECT formula (includes initialBalance)
   const getBalance = () => {
     // Use server data if available
     if (dashboard.summary?.totalBalance !== undefined) {
+      console.log('💰 Using dashboard summary balance:', dashboard.summary.totalBalance)
       return dashboard.summary.totalBalance
     }
-    // Fallback to calculated balance from transactions
-    const totalIncome = transactions.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0)
-    const totalExpense = transactions.filter(t => t.type === 'expense').reduce((a, t) => a + t.amount, 0)
-    return totalIncome - totalExpense
+    
+    // ✅ FIXED: Include initialBalance in calculation
+    const totalIncome = transactions.filter(t => t.type === 'income').reduce((a, t) => a + (t.amount || 0), 0)
+    const totalExpense = transactions.filter(t => t.type === 'expense').reduce((a, t) => a + (t.amount || 0), 0)
+    const initialBalance = user?.initialBalance || 0
+    const balance = initialBalance + totalIncome - totalExpense
+    
+    console.log('💰 Calculated balance:', { initialBalance, totalIncome, totalExpense, balance })
+    
+    return balance
   }
 
   const balance = getBalance()
   
-  // 💚 Calculate financial health
-  const getHealthScore = () => {
-    if (dashboard.summary?.healthScore !== undefined) {
-      return dashboard.summary.healthScore
-    }
-    // Fallback calculation: ratio of income to total transactions
-    if (transactions.length === 0) return 50
-    const incomeCount = transactions.filter(t => t.type === 'income').length
-    const expenseCount = transactions.filter(t => t.type === 'expense').length
-    const ratio = expenseCount > 0 ? (incomeCount / (incomeCount + expenseCount)) * 100 : 50
-    return Math.min(100, Math.max(0, Math.round(ratio)))
-  }
-  
-  const health = getHealthScore()
-  const healthColor = health > 60 ? '#14b8a6' : health > 30 ? '#f59e0b' : '#f87171'
+  // 💚 Calculate PROPER financial health score using utility
+  const healthData = calculateFinancialHealth(transactions, user?.initialBalance || 0)
+  const health = healthData.score
+  const healthColor = healthData.color
 
   // 📸 Get user avatar - use profile image or initials
   const getInitials = (name) => {

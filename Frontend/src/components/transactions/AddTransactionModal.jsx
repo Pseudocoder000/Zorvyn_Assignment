@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { addTransaction } from '../../features/transactions/transactionsSlice'
+import { createTransaction, fetchTransactions } from '../../features/transactions/transactionsSlice'
 import { addNotification } from '../../features/notifications/notificationSlice'
 import { CATEGORIES, CATEGORY_COLORS } from '../../data/mockTransactions'
-import { X, ChevronDown, Check } from 'lucide-react'
+import { X, ChevronDown, Check, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 // ── Custom Category Dropdown ─────────────────────────────────
@@ -107,17 +107,39 @@ export default function AddTransactionModal({ onClose }) {
     amount: '',
     type: 'expense',
     category: 'Shopping',
-    date: new Date().toISOString().split('T')[0]
+    date: new Date().toISOString().split('T')[0],
+    description: ''
   })
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.name.trim()) return setError('Name is required')
     if (!form.amount || isNaN(form.amount) || +form.amount <= 0) return setError('Enter a valid amount')
-    dispatch(addTransaction({ ...form, amount: +form.amount }))
-    dispatch(addNotification(`Added: ${form.name} ₹${form.amount}`))
-    toast.success(`"${form.name}" added successfully!`)
-    onClose()
+    
+    setLoading(true)
+    setError('')
+    
+    try {
+      // Call backend to create transaction
+      await dispatch(createTransaction({
+        ...form,
+        amount: Number(form.amount)
+      })).unwrap()
+      
+      // Reload transactions to update the list
+      await dispatch(fetchTransactions({ page: 1, limit: 20 }))
+      
+      dispatch(addNotification(`Added: ${form.name} ₹${form.amount}`))
+      toast.success(`"${form.name}" added successfully!`)
+      onClose()
+    } catch (err) {
+      const errorMsg = err || 'Failed to add transaction'
+      setError(errorMsg)
+      toast.error(errorMsg)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const inputClass = isLight
@@ -250,6 +272,18 @@ export default function AddTransactionModal({ onClose }) {
               isLight={isLight}
             />
           </div>
+
+          {/* Description (Optional) */}
+          <div>
+            <label className={labelClass}>Description (Optional)</label>
+            <input
+              type="text"
+              value={form.description}
+              onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+              placeholder="e.g. Monthly subscription"
+              className={inputClass}
+            />
+          </div>
         </div>
 
         {/* Actions */}
@@ -266,9 +300,17 @@ export default function AddTransactionModal({ onClose }) {
           </button>
           <button
             onClick={handleSubmit}
-            className="flex-1 py-2.5 rounded-xl gb text-sm"
+            disabled={loading}
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl gb text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
-            Add Transaction
+            {loading ? (
+              <>
+                <Loader2 size={14} className="animate-spin" />
+                Adding...
+              </>
+            ) : (
+              'Add Transaction'
+            )}
           </button>
         </div>
       </div>

@@ -4,8 +4,9 @@ import { deleteTransaction, setFilter, resetFilter, selectFiltered } from '../fe
 import { CATEGORIES, CATEGORY_COLORS } from '../data/mockTransactions'
 import { formatCurrency, formatDate, exportToCSV } from '../utils/formatters'
 import Badge from '../components/ui/Badge'
-import { Search, Trash2, Plus, Download, RotateCcw, ChevronDown, Check } from 'lucide-react'
+import { Search, Trash2, Plus, Download, RotateCcw, ChevronDown, Check, Upload } from 'lucide-react'
 import AddTransactionModal from '../components/transactions/AddTransactionModal'
+import CSVUploadModal from '../components/transactions/CSVUploadModal'
 import toast from 'react-hot-toast'
 import { SkeletonTransactionRow } from '../components/ui/SkeletonCard'
 
@@ -90,6 +91,7 @@ export default function Transactions() {
   const isLight = mode === 'light'
   const isAdmin = role === 'admin'
   const [showModal, setShowModal] = useState(false)
+  const [showCSVModal, setShowCSVModal] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -151,14 +153,22 @@ export default function Transactions() {
           >
             <Download size={15} /> Export CSV
           </button>
-          {isAdmin && (
-            <button
-              onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl gb text-sm"
-            >
-              <Plus size={15} /> Add Transaction
-            </button>
-          )}
+          <button
+            onClick={() => setShowCSVModal(true)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-medium transition-all ${
+              isLight
+                ? 'border-teal-200 bg-teal-50 text-teal-600 hover:border-teal-400 shadow-sm'
+                : 'border-teal-500/30 bg-teal-500/10 text-teal-300 hover:border-teal-500/50'
+            }`}
+          >
+            <Upload size={15} /> Import CSV
+          </button>
+          <button
+            onClick={() => setShowModal(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl gb text-sm"
+          >
+            <Plus size={15} /> Add Transaction
+          </button>
         </div>
       </div>
 
@@ -280,6 +290,7 @@ export default function Transactions() {
       </div>
 
       {showModal && <AddTransactionModal onClose={() => setShowModal(false)} />}
+      {showCSVModal && <CSVUploadModal onClose={() => setShowCSVModal(false)} />}
     </div>
   )
 }
