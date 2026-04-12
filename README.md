@@ -152,9 +152,6 @@ No strict CSV format required
 Contributions are welcome!
 Feel free to fork the repo and submit a PR.
 
-📄 License
-
-This project is licensed under the MIT License.
 
 👩‍💻 Author
 
